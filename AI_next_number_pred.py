@@ -2,12 +2,14 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 
 # Define past numbers as input data
-train = [[1], [2], [3], [4]]
-print(f"Trained Data : {train}")
+xtrain = [[1], [2], [3], [4]]
+print(f"X Trained Data : {train}")
 X_train = np.array(train)
 
 # Define next numbers as output data
-y_train = np.array([6, 7, 8, 9])
+ytrain = [6, 7, 8, 9]
+print(f"Y Trained Data: {ytrain}")
+y_train = np.array(ytrain)
 
 # Create linear regression model
 model = LinearRegression()
