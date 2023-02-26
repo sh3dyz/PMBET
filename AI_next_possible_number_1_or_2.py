@@ -10,7 +10,7 @@ import random
 history = [] #minmum of one sample
 for i in range(20):
     history.append(random.randint(1,2)) # we add some samples
-    
+history_bk = history
 def PredictNumber(history):
     #convert that history to a numpy array
     X = np.array(history[:-1]).reshape(-1, 1)
@@ -41,6 +41,7 @@ for i in range(totg):
     pn = PredictNumber(history)
     rn = int(random.randint(1, 2))
     history.append(rn)
+    history_bk.append(rn)
     del(history[0]) # we need to learn from few history
     
     # lets verify if AI win or Not
