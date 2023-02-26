@@ -19,12 +19,19 @@ def PredictNumber(history):
     #lets use the above model to predict next number
     nx_num = md.predict(np.array([history[-1]]).reshape(-1, 1))[0]
 
-    #show history
-    print("HISTORY: ", history)
-    #lets print next number
-    print("Possible Next Number: ", nx_num)
+    # #show history
+    # print("HISTORY: ", history)
+    # #lets print next number
+    # print("Possible Next Number: ", nx_num)
+    return nx_num
     
 for i in range(10):
+    pn = PredictNumber(history)
     rn = int(random.randint(1, 2))
     history.append(rn)
-    PredictNumber(history)
+    
+    # lets verify if AI win or Not
+    if pn == rn:
+        print("AI Win!")
+    else:
+        print("AI Loss!")
