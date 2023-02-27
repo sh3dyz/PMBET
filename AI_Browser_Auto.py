@@ -74,6 +74,11 @@ def Login(browser, username, password):
         return True
     return error.text
 
+def waitGetElement(browser, xpath, seconds):
+    subiri = WebDriverWait(browser, int(seconds))
+    element = subiri.until(EC.presence_of_element_located((By.XPATH, xpath)))
+    return element
+
 def OpenCasino(browser):
     browser.get(links["casino"])
     play = browser.find_element(cas_h["play"])
@@ -85,8 +90,7 @@ def OpenCasino(browser):
     loby_frame = browser.find_element(By.XPATH, cas_h["lobyFrame"])
     browser.switch_to.frame(loby_frame)
     # wait it to load then click play
-    wait = WebDriverWait(browser, 10)
-    play_casino = wait.until(EC.presence_of_element_located((By.XPATH, cas_h["playCasino"])))
+    play_casino = waitGetElement(browser, cas_h["playCasino"], "5")
     play_casino.click()
     # REMINDER: we are in the game, but we dont dive out of a frame
     # we gonna proceed with next stuffs
