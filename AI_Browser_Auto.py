@@ -88,4 +88,5 @@ def OpenCasino(browser):
     wait = WebDriverWait(browser, 10)
     play_casino = wait.until(EC.presence_of_element_located((By.XPATH, cas_h["playCasino"])))
     play_casino.click()
-    
+    # REMINDER: we are in the game, but we dont dive out of a frame
+    # we gonna proceed with next stuffs

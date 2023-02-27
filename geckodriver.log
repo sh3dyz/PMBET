@@ -433,3 +433,37 @@ JavaScript error: resource://gre/modules/AsyncShutdown.sys.mjs, line 576: NotFou
 1677535779031	Marionette	INFO	Stopped listening on port 50787
 Dynamically enable window occlusion 1
 1677535790273	geckodriver	INFO	Listening on 127.0.0.1:51628
+1677535793328	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "51629" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\sh3dyz\\AppData\\Local\\Temp\\rust_mozprofileYfMdXB"
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1677535796773	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1677535796791	Marionette	INFO	Listening on port 51636
+WebDriver BiDi listening on ws://127.0.0.1:51629
+Read port: 51636
+1677535799475	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.error: Region.sys.mjs: "Error fetching region" (new Error("TIMEOUT", "resource://gre/modules/Region.sys.mjs", 764))
+console.error: Region.sys.mjs: "Failed to fetch region" (new Error("TIMEOUT", "resource://gre/modules/Region.sys.mjs", 416))
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at C:\\Users\\sh3dyz\\AppData\\Local\\Temp\\rust_mozprofileYfMdXB\\search.json.mozlz4", (void 0)))
+DevTools listening on ws://127.0.0.1:51629/devtools/browser/78b90b97-5cbe-431d-a0c2-d09917b6d312
+console.warn: LoginRecipes: "Falling back to a synchronous message for: https://pmbet.co.tz."
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+console.error: (new TypeError("lazy.AsyncShutdown.profileBeforeChange is undefined", "resource://services-settings/Database.jsm", 603))
+[Child 13996, MediaDecoderStateMachine #1] WARNING: 26a68432890 Could not set cubeb stream name.: file /builds/worker/checkouts/gecko/dom/media/AudioStream.cpp:321
+[Child 13996, MediaDecoderStateMachine #1] WARNING: 26a64fbf460 Could not set cubeb stream name.: file /builds/worker/checkouts/gecko/dom/media/AudioStream.cpp:321
+[Child 13996, MediaDecoderStateMachine #1] WARNING: 26a67b45010 Could not set cubeb stream name.: file /builds/worker/checkouts/gecko/dom/media/AudioStream.cpp:321
+[Child 13996, MediaDecoderStateMachine #1] WARNING: 26a63b8d8a0 Could not set cubeb stream name.: file /builds/worker/checkouts/gecko/dom/media/AudioStream.cpp:321
+console.warn: "Async method failed in safeAsyncMethod" (new Error("Connection closed, pending request to server0.conn0.windowGlobal10737418241/layout26, type getGrids failed\n\nRequest stack:\nrequest@resource://devtools/shared/protocol/Front.js:300:14\ngenerateRequestMethods/</frontProto[name]@resource://devtools/shared/protocol/Front/FrontClassWithSpec.js:47:19\ngetAllGrids@resource://devtools/client/fronts/layout.js:173:17\nexports.safeAsyncMethod/<@resource://devtools/shared/async-utils.js:61:25\ngetGrids@resource://devtools/client/inspector/grids/grid-inspector.js:452:35\n", "resource://devtools/shared/protocol/Front.js", 106))
+JavaScript error: , line 0: NotFoundError: No such JSWindowActor 'DevToolsFrame'
+JavaScript error: , line 0: NotFoundError: No such JSWindowActor 'DevToolsFrame'
+JavaScript error: , line 0: NotFoundError: No such JSWindowActor 'DevToolsFrame'
+JavaScript error: , line 0: NotFoundError: No such JSWindowActor 'DevToolsFrame'
+JavaScript error: , line 0: NotFoundError: No such JSWindowActor 'DevToolsFrame'
+JavaScript error: , line 0: NotFoundError: No such JSWindowActor 'DevToolsFrame'
+JavaScript error: , line 0: NotFoundError: No such JSWindowActor 'DevToolsFrame'
+JavaScript error: , line 0: NotFoundError: No such JSWindowActor 'DevToolsFrame'
+console.warn: "Listener for event 'frame' did not return a promise."
+[Child 13996, MediaDecoderStateMachine #1] WARNING: 26a6629d790 Could not set cubeb stream name.: file /builds/worker/checkouts/gecko/dom/media/AudioStream.cpp:321
+JavaScript error: https://static.egcdn.com/frontend/roulette/french-fix/js/commons.da558a7c.js, line 1: Transport: Transport is disposed. [CLIENT_SCREEN_INFO]
+JavaScript error: https://static.egcdn.com/frontend/roulette/french-fix/js/commons.da558a7c.js, line 1: Transport: Transport is disposed. [CLIENT_SCREEN_INFO]
