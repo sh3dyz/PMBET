@@ -1,0 +1,14 @@
+1677515358223	geckodriver	INFO	Listening on 127.0.0.1:63568
+1677515361471	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "63569" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\sh3dyz\\AppData\\Local\\Temp\\rust_mozprofilekpsfam"
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1677515364205	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1677515364267	Marionette	INFO	Listening on port 63580
+Read port: 63580
+WebDriver BiDi listening on ws://127.0.0.1:63569
+1677515365326	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at C:\\Users\\sh3dyz\\AppData\\Local\\Temp\\rust_mozprofilekpsfam\\search.json.mozlz4", (void 0)))
+DevTools listening on ws://127.0.0.1:63569/devtools/browser/ab2b2180-4ad7-4f12-bff0-740554e02d74
+1677524047088	Sync.ErrorHandler	ERROR	Sync encountered a login error
+console.error: "Sync encountered an error - see about:sync-log for the log file."
