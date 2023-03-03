@@ -56,15 +56,15 @@ def OpenHome(browser):
     cls.click()
     return True
 
-def Login(browser, username, password):
+def Login(browser, uname, pword):
     browser.get(links["login"])
     Delay(2)
     username = browser.find_element(By.ID, "login-username")
     username.clear() # remove nonsense
-    username.send_keys(username)
+    username.send_keys(uname)
     password = browser.find_element(By.ID, "login-password")
     password.clear() # remove nonsense
-    password.send_keys(password)
+    password.send_keys(pword)
     Delay(2)
     login = browser.find_element(By.XPATH, login_xpath["submit"])
     login.click()
@@ -149,3 +149,6 @@ def main():
         # ?know how much you win
         # ?know how much you loose
         # ?Detect if game round is completed
+
+if __name__ == "__main__":
+    main()
