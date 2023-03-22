@@ -2,11 +2,13 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support import expected_conditions as EC
 import numpy as np
 from sklearn .linear_model import LogisticRegression
 import time
 import sys
+import getpass
 
 # ID = "id"
 # NAME = "name"
@@ -70,7 +72,9 @@ cas_game = {
     "View-Btn":"/html/body/div[4]/div[2]/div/div[2]/div[4]/div[2]/div/div/div[1]/div[2]/div[2]/div/button/span/span/svg",
     "Balance":"/html/body/div[4]/div[2]/div/div[2]/div[4]/div[3]/div/div/div[1]/div/span[2]/span[2]",
     "Last-Win-Balance":"/html/body/div[4]/div[2]/div/div[2]/div[4]/div[3]/div/div/div[2]/div[2]/span[2]/span[2]",
-    "Price-Btn":"/html/body/div[4]/div[2]/div/div[2]/div[2]/div/div[6]/div[3]/div/div/div[2]/div/div[{}]/div[2]/svg/text",
+    # "Price-Btn":"/html/body/div[4]/div[2]/div/div[2]/div[2]/div/div[6]/div[3]/div/div/div[2]/div/div[{}]/div[2]/svg/text",
+    "Price-Btn":"/html/body/div[4]/div[2]/div/div[2]/div[2]/div/div[6]/div[3]/div/div/div[2]/div/div[{}]",
+    # "Price-Btn":"/html/body/div[4]/div[2]/div/div[2]/div[2]/div/div[6]/div[3]/div/div/div[2]/div/div[3]"
     "Refresh-Btn":"/html/body/div[4]/div[2]/div/div[2]/div[11]/div/div/div/div[2]/div/div[2]/button",
     "result-bod":"/html/body/div[4]/div[2]/div/div[2]/div[2]/div/div[6]/div[1]/div/div/div[2]",
     "Net-Err":"/html/body/div[4]/div[2]/div/div[2]/div[2]/div/div[7]/div[2]/div/div[3]",
@@ -79,6 +83,8 @@ cas_game = {
 }
 
 auto_vip = {
+    # "ViewMod":"/html/body/div[4]/div[2]/div/div[2]/div[9]/div[2]/div/div/div[1]/div[2]/div[2]/div/button/span/span/svg",
+    "ViewMod":"/html/body/div[4]/div[2]/div/div[2]/div[8]/div[2]/div/div/div[1]/div[2]/div[2]/div/button/span",
     "view-classic":"/html/body/div[4]/div[2]/div/div[2]/div[8]/div[2]/div/div/div[1]/div[2]/div[2]/div/div/span/div/div[2]",
     "open-vip":"/html/body/div[4]/div/div[2]/div/div/div/main/section/div[2]/ul/li[10]/div/article/div[1]/div[2]",
     "red-btn":"/html/body/div[4]/div[2]/div/div[2]/div[2]/div/div[6]/div[2]/div/div[2]/div/div[1]/div/div[1]/div/svg/g/rect[45]"
@@ -121,10 +127,13 @@ def Login(browser, uname, pword):
         return True
     return error.text
 
-def waitGetElement(browser, xpath, seconds, disp=None):
+def waitGetElement(browser, xpath, seconds, disp=None, appr=None):
     subiri = WebDriverWait(browser, int(seconds))
     if disp:
         subiri.until(EC.invisibility_of_element_located((By.XPATH, xpath)))
+        return True
+    elif appr:
+        subiri.until(EC.visibility_of_element_located((By.XPATH, xpath)))
         return True
     else:    
         element = subiri.until(EC.presence_of_element_located((By.XPATH, xpath)))
@@ -176,7 +185,7 @@ def main():
     openNewTab(browser, tab=1)
     while True:
         phonenumber = str(input("Enter Phone: "))
-        password = str(input("Enter password: "))
+        password = str(getpass.getpass("Enter password: "))
         login = Login(browser, phonenumber, password)
         if login == True:
             # Success
@@ -213,13 +222,14 @@ def main():
         FULL_HIST = list()
         global LAST_WIN_B
         GAMEHIST = []
+        ViewChange = False
         while True:
             FULL_HIST = FULL_HIST + GAMEHIST
             def check_balance(browser):
-                # return balance as int
+                # return balance as float
                 try:
                     balance = browser.find_element(By.XPATH, cas_game["Balance"])
-                    return int(balance.text)
+                    return float(balance.text)
                 except Exception as Error:
                     return Error
                 
@@ -239,7 +249,8 @@ def main():
                 try:
                     for i in range(12):
                         hist = browser.find_element(By.XPATH, cas_game["Game-Hist"].format(i+1))
-                        histlist.append(hist.text)
+                        histlist.append(int(hist.text))
+                    print(f"\nActual History : {histlist}")
                     for i in histlist:
                         if i in red:
                             colorlist.append(1)
@@ -273,7 +284,7 @@ def main():
             def LastWinBalance(browser):
                 try:
                     balance = browser.find_element(By.XPATH, cas_game["Last-Win-Balance"])
-                    return int(balance.text)
+                    return float(balance.text)
                 except Exception as Error:
                     return Error
             
@@ -309,19 +320,31 @@ def main():
             def ChangeView(browser):
                 # no need for view type, we deal with classic only
                 try:
-                    classic = browser.find_element(By.XPATH, auto_vip["view-classic"])
+                    # Here we have to wait until above shit is done loading
+                    waitGetElement(browser, auto_vip["ViewMod"], 60, appr=True)
+                    viewmod = browser.find_element(By.XPATH, auto_vip["ViewMod"])
+                    act = ActionChains(browser)
+                    act.move_to_element(viewmod).perform()
+                    classic = WebDriverWait(browser, 10).until(EC.element_to_be_clickable((By.XPATH, auto_vip["view-classic"])))
                     classic.click()
+                    act.move_to_element(viewmod)
+                    act.click(viewmod).perform()
                     return True
                 except Exception as Error:
                     return Error
             
             # Change View to Classic First
-            view = ChangeView(browser)
-            if view != True:
-                print("Failed To Change View Mod To Classic!\nError: {}".format(view))
-                sys.exit(1) # we quit it for debugging
+            if not ViewChange:
+                view = ChangeView(browser)
+                if view != True:
+                    print("Failed To Change View Mod To Classic!\nError: {}".format(view))
+                    sys.exit(1) # we quit it for debugging
+                else:
+                    ViewChange = True
+                    print("View Mod changed to classic")
+                    Delay(3)
+                    pass
             else:
-                Delay(3)
                 pass
             
             global isStarted
@@ -330,7 +353,7 @@ def main():
                 while True: # detect game progress
                     # check and remove low price btn
                     pO = check_pop(browser)
-                    if pO:
+                    if pO == True:
                         # low balance, ask user to add funds
                         print("Low Balance Please add min amount for Bet, 200 Tsh")
                         pass
@@ -343,18 +366,21 @@ def main():
                         waitGetElement(browser, cas_game["BetOn"], 60, disp=True)
                     except:
                         pass
+                    # we skip this shit because we dont want to bet on fucking zero
                     if skip:
-                        waitGetElement(browser, cas_game["result-bod"], 60, disp=True)
+                        waitGetElement(browser, cas_game["Price-Btn"].format(str(1)), 60, disp=True)
+                    # set it back to None, bcz we dont want to mess with skip anymore aftr restart loop
                     skip = None
                     rnd = RoundDone(browser)
-                    if rnd.startswith("False:"):
+                    if "str" in str(type(rnd)):
                         print("Error Generated on Checking Round:\nError: {}".format(rnd))
                         continue
                     else:
-                        rst = rnd.text
+                        rst = str(rnd.text)
                         if "PLACE YOUR BETS".lower() == rst.lower():
                             # Bet Time
                             isStarted = True
+                            print("Placing a Bet...")
                             break # stop and lets Go!
                         elif "WAIT FOR NEXT GAME".lower() == rst.lower():
                             # lets wait
@@ -362,18 +388,20 @@ def main():
                         else:
                             # result
                             continue
-            GameProg()
+                        
+            GameProg(browser)
             
             gmh = GameHist(browser)
-            if str(type(wb))[8:][:-2] != "list":
+            if str(type(gmh))[8:][:-2] != "list":
                 print("Failed to get History\nError: {}".format(gmh))
                 sys.exit(1)
             else:
+                print("Game History: {}\n".format(str(gmh)))
                 GAMEHIST = gmh
             
             # update last win balance
             wb = LastWinBalance(browser)
-            if str(type(wb))[8:][:-2] != "int":
+            if str(type(wb))[8:][:-2] != "float":
                 print("Failed to get last win balance\nError: {}".format(wb))
                 sys.exit(1)
             else:
@@ -383,18 +411,22 @@ def main():
             if CURRENT_BET in [1, 2]:
                 if gmh[0] == CURRENT_BET:
                     # Win
+                    print()
                     WIN_GAME += 1
                     WIN_PERCNT = (WIN_GAME / len(PLAYED_GAMES)) * 100
                     print("You Win : {} Tsh".format(str(wb)))
                     print("Win Percent : {}%".format(str(WIN_PERCNT)))
                     CURRENT_BET = 0
+                    print()
                 else:
                     # Lost
+                    print()
                     LOST_GAME += 1
                     LOST_PERCNT = (LOST_GAME / len(PLAYED_GAMES)) * 100
                     print("You Lost : {} Tsh".format(str(CURRENT_BET_AMOUNT)))
                     print("Lost Percent : {}%".format(str(LOST_PERCNT)))
                     CURRENT_BET = 0
+                    print()
             else:
                 pass
             
@@ -404,20 +436,26 @@ def main():
                 print("Failed To change Bet Amount\nError: {}".format(betamount))
                 sys.exit(1)
             else:
+                print("\nBet Amount Changed to 200 Tsh")
                 CURRENT_BET_AMOUNT = 200
             
             # update balance
             bl = check_balance(browser)
-            if str(type(bl))[8:][:-2] != "int":
+            if str(type(bl))[8:][:-2] != "float":
                 print("Failed To Get Balance\nError: {}".format(bl))
                 sys.exit(1)
             else:
+                print("Balance : {} Tsh\n".format(str(bl)))
                 BALANCE = bl
                 
             # INABIDI TUMPE AI wetu mchongo ajifunze hii history!
+            print("Learnig from History")
             next_number = PredictNumber(GAMEHIST)
             if next_number == 1:
                 CURRENT_BET = 1
+                print("Betting on red\n")
+                Delay(18) # for tesing
+                PLAYED_GAMES.append(2) # for testing
                 if False:
                     Bet_Red = BetColor(browser, 1)
                     if Bet_Red != True:
@@ -431,6 +469,9 @@ def main():
                         Delay(18) # inachukua sec 20 hadi round kuwa closed
             elif next_number == 2:
                 CURRENT_BET = 2
+                print("Betting on black\n")
+                Delay(18) # for testing
+                PLAYED_GAMES.append(2) # for testing
                 if False:
                     Bet_Black = BetColor(browser, 2)
                     if Bet_Black != True:
@@ -442,9 +483,10 @@ def main():
                         print("Bet is accepted")
                         PLAYED_GAMES.append(2)
                         Delay(18) # inachukua sec 20 hadi round kuwa closed
-                else:
-                    # dont bet on zero
-                    GameProg(browser, skip=True)
+            else:
+                # dont bet on zero
+                print("skipping Zero")
+                GameProg(browser, skip=True)
                     
 
 if __name__ == "__main__":
