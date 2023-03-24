@@ -222,6 +222,7 @@ def main():
         FULL_HIST = list()
         global LAST_WIN_B
         GAMEHIST = []
+        global GGHIST
         ViewChange = False
         while True:
             FULL_HIST = FULL_HIST + GAMEHIST
@@ -243,6 +244,7 @@ def main():
                     return Error # Kama haipo
                 
             def GameHist(browser):
+                global GGHIST
                 red = [1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36]
                 histlist = list() # store game hist as list
                 colorlist = list()
@@ -250,7 +252,8 @@ def main():
                     for i in range(12):
                         hist = browser.find_element(By.XPATH, cas_game["Game-Hist"].format(i+1))
                         histlist.append(int(hist.text))
-                    print(f"\nActual History : {histlist}")
+                    # print(f"\nActual History : {histlist}")
+                    GGHIST = histlist
                     for i in histlist:
                         if i in red:
                             colorlist.append(1)
@@ -321,11 +324,11 @@ def main():
                 # no need for view type, we deal with classic only
                 try:
                     # Here we have to wait until above shit is done loading
-                    waitGetElement(browser, auto_vip["ViewMod"], 60, appr=True)
+                    waitGetElement(browser, auto_vip["ViewMod"], 120, appr=True)
                     viewmod = browser.find_element(By.XPATH, auto_vip["ViewMod"])
                     act = ActionChains(browser)
                     act.move_to_element(viewmod).perform()
-                    classic = WebDriverWait(browser, 10).until(EC.element_to_be_clickable((By.XPATH, auto_vip["view-classic"])))
+                    classic = WebDriverWait(browser, 120).until(EC.element_to_be_clickable((By.XPATH, auto_vip["view-classic"])))
                     classic.click()
                     act.move_to_element(viewmod)
                     act.click(viewmod).perform()
@@ -341,7 +344,7 @@ def main():
                     sys.exit(1) # we quit it for debugging
                 else:
                     ViewChange = True
-                    print("View Mod changed to classic")
+                    print("\nView Mod changed to classic\n")
                     Delay(3)
                     pass
             else:
@@ -355,7 +358,7 @@ def main():
                     pO = check_pop(browser)
                     if pO == True:
                         # low balance, ask user to add funds
-                        print("Low Balance Please add min amount for Bet, 200 Tsh")
+                        print("\nLow Balance Please add min amount for Bet, 200 Tsh\n")
                         pass
                     else:
                         pass
@@ -396,7 +399,7 @@ def main():
                 print("Failed to get History\nError: {}".format(gmh))
                 sys.exit(1)
             else:
-                print("Game History: {}\n".format(str(gmh)))
+                #\print("Game History: {}\n".format(str(gmh)))
                 GAMEHIST = gmh
             
             # update last win balance
@@ -407,26 +410,50 @@ def main():
             else:
                 LAST_WIN_B = wb
             
+            BalaHist = '\nBalance\t\t{} Tsh\nLastWin\t\t{} Tsh\nBET\t\t{} Tsh\n\nGAMEHIST - {}\nCOLOHIST - {}\n\n'
+            WinData = '\nGames Played\t\t{}\nGames Won\t\t{}\nGames Lost\t{}\n\nWin Percent\t\t{}%\nLost Percent\t\t{}%\n\nCURRENT GAME RESULTS\nBET\t{}\nWIN\t{} Tsh\n'
+            LostData = '\nGames Played\t\t{}\nGames Won\t\t{}\nGames Lost\t{}\n\nWin Percent\t\t{}%\nLost Percent\t\t{}%\n\nCURRENT GAME RESULTS\nBET\t{}\nLOST\t{} Tsh\n'
+            
             # lets check if we win or we lost
             if CURRENT_BET in [1, 2]:
                 if gmh[0] == CURRENT_BET:
                     # Win
-                    print()
                     WIN_GAME += 1
                     WIN_PERCNT = (WIN_GAME / len(PLAYED_GAMES)) * 100
-                    print("You Win : {} Tsh".format(str(wb)))
-                    print("Win Percent : {}%".format(str(WIN_PERCNT)))
+                    try:
+                        LOST_PERCNT = (LOST_GAME / len(PLAYED_GAMES)) * 100
+                    except ZeroDivisionError:
+                        LOST_PERCNT = LOST_PERCNT
+                    # print("You Win : {} Tsh".format(str(wb)))
+                    # print("Win Percent : {}%".format(str(WIN_PERCNT)))
+                    print(WinData.format(str(len(PLAYED_GAMES)), 
+                                         str(WIN_GAME), 
+                                         str(LOST_GAME), 
+                                         str(WIN_PERCNT), 
+                                         str(LOST_PERCNT), 
+                                         str("red" if CURRENT_BET == 1 else "black"),
+                                         str(LAST_WIN_B)))
                     CURRENT_BET = 0
-                    print()
                 else:
                     # Lost
-                    print()
                     LOST_GAME += 1
                     LOST_PERCNT = (LOST_GAME / len(PLAYED_GAMES)) * 100
-                    print("You Lost : {} Tsh".format(str(CURRENT_BET_AMOUNT)))
-                    print("Lost Percent : {}%".format(str(LOST_PERCNT)))
+                    try:
+                        WIN_PERCNT = (WIN_GAME / len(PLAYED_GAMES)) * 100
+                    except ZeroDivisionError:
+                        WIN_PERCNT = WIN_PERCNT
+                    # print("You Lost : {} Tsh".format(str(CURRENT_BET_AMOUNT)))
+                    # print("Lost Percent : {}%".format(str)(LOST_PERCNT))
+                    print(LostData.format(
+                        str(len(PLAYED_GAMES)),
+                        str(WIN_GAME),
+                        str(LOST_GAME),
+                        str(WIN_PERCNT),
+                        str(LOST_PERCNT),
+                        str("red" if CURRENT_BET == 1 else "black"),
+                        str(CURRENT_BET_AMOUNT)
+                    ))
                     CURRENT_BET = 0
-                    print()
             else:
                 pass
             
@@ -436,7 +463,7 @@ def main():
                 print("Failed To change Bet Amount\nError: {}".format(betamount))
                 sys.exit(1)
             else:
-                print("\nBet Amount Changed to 200 Tsh")
+                #print("\nBet Amount Changed to 200 Tsh")
                 CURRENT_BET_AMOUNT = 200
             
             # update balance
@@ -445,15 +472,23 @@ def main():
                 print("Failed To Get Balance\nError: {}".format(bl))
                 sys.exit(1)
             else:
-                print("Balance : {} Tsh\n".format(str(bl)))
+                #print("Balance : {} Tsh\n".format(str(bl)))
                 BALANCE = bl
-                
+            CLIST = GAMEHIST.reverse()
+            print(BalaHist.format(
+                str(BALANCE),
+                str(LAST_WIN_B),
+                str(CURRENT_BET_AMOUNT),
+                str(GGHIST),
+                str(GAMEHIST)
+            ))
+            
             # INABIDI TUMPE AI wetu mchongo ajifunze hii history!
-            print("Learnig from History")
+            print("\nLearnig from History\n")
             next_number = PredictNumber(GAMEHIST)
             if next_number == 1:
                 CURRENT_BET = 1
-                print("Betting on red\n")
+                print("\nBetting on red\n")
                 Delay(18) # for tesing
                 PLAYED_GAMES.append(2) # for testing
                 if False:
@@ -469,7 +504,7 @@ def main():
                         Delay(18) # inachukua sec 20 hadi round kuwa closed
             elif next_number == 2:
                 CURRENT_BET = 2
-                print("Betting on black\n")
+                print("\nBetting on black\n")
                 Delay(18) # for testing
                 PLAYED_GAMES.append(2) # for testing
                 if False:
@@ -485,7 +520,7 @@ def main():
                         Delay(18) # inachukua sec 20 hadi round kuwa closed
             else:
                 # dont bet on zero
-                print("skipping Zero")
+                print("\nskipping Zero\n")
                 GameProg(browser, skip=True)
                     
 
